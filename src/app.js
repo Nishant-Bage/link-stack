@@ -117,6 +117,7 @@ $("expand").addEventListener("click", () =>
   chrome.tabs.create({ url: chrome.runtime.getURL("index.html?view=library") }),
 );
 if (new URLSearchParams(location.search).get("view") === "library") {
+    document.documentElement.classList.add("full-library");
   document.body.classList.add("full-library");
   $("expand").hidden = true;
   $("save-current").hidden = true;

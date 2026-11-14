@@ -12,6 +12,15 @@
 * {
   box-sizing: border-box;
 }
+/* Extension popups size themselves from the document's intrinsic width. */
+html {
+  width: 440px;
+  min-width: 440px;
+}
+html.full-library {
+  width: 100%;
+  min-width: 0;
+}
 body {
   width: 440px;
   margin: 0;
@@ -312,13 +321,13 @@ footer {
   clip: rect(0, 0, 0, 0);
 }
 @media (max-width: 420px) {
-  body {
+  body.full-library {
     width: 100%;
   }
-  header {
+  .full-library header {
     padding: 18px;
   }
-  main {
+  .full-library main {
     padding: 0 18px 18px;
   }
 }
