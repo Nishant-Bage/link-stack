@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Link Stack",
+  "version": "0.1.0",
+  "description": "Save the current tab, organize links into stacks, and find them after tabs close.",
+  "permissions": ["storage", "activeTab"],
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Open Link Stack"
+  },
+  "background": { "service_worker": "src/background.js", "type": "module" }
+}

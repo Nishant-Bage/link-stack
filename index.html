@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Link Stack — links worth keeping</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <span class="logo" aria-hidden="true">▱</span>
+        <div>
+          <strong>Link Stack</strong
+          ><span class="subtitle">A little less tab chaos.</span>
+        </div>
+      </div>
+      <button id="expand" class="quiet" title="Open full library">
+        Full library ↗
+      </button>
+    </header>
+    <main>
+      <section class="capture" aria-labelledby="capture-title">
+        <span class="eyebrow">KEEP THE GOOD STUFF</span>
+        <h1 id="capture-title">Close the tab.<br />Keep the link.</h1>
+        <p>Your useful corner of the internet, all in one place.</p>
+        <button id="save-current" class="primary">＋ Save current tab</button
+        ><button id="toggle-manual" class="quiet">
+          or add a link manually
+        </button>
+      </section>
+      <form id="add-form" hidden>
+        <label
+          >URL<input
+            id="url"
+            type="url"
+            required
+            placeholder="https://example.com"
+            maxlength="8000"
+        /></label>
+        <label
+          >Title <span class="optional">(optional)</span
+          ><input
+            id="title"
+            maxlength="300"
+            placeholder="What makes it worth keeping?"
+        /></label>
+        <label
+          >Stack<input
+            id="stack"
+            list="stack-options"
+            maxlength="60"
+            value="Inbox" /></label
+        ><datalist id="stack-options"></datalist>
+        <div class="actions">
+          <button class="primary" type="submit">Save link</button
+          ><button id="cancel" type="button" class="quiet">Cancel</button>
+        </div>
+      </form>
+      <div class="feedback">
+        <p id="message" role="status" aria-live="polite"></p>
+        <button id="undo" hidden>Undo delete</button>
+      </div>
+      <section aria-labelledby="library-title">
+        <div class="section-heading">
+          <h2 id="library-title">Your library <span id="count">0</span></h2>
+          <div>
+            <button id="import" class="quiet">Restore ↑</button
+            ><button id="export" class="quiet">Export ↓</button>
+          </div>
+        </div>
+        <input
+          id="import-file"
+          type="file"
+          accept="application/json,.json"
+          hidden
+          aria-label="Restore Link Stack backup"
+        />
+        <label class="search"
+          ><span class="sr-only">Search saved links</span
+          ><input
+            id="search"
+            type="search"
+            placeholder="Search titles, links, or stacks…"
+        /></label>
+        <div class="filters">
+          <label
+            ><span class="sr-only">Filter by stack</span
+            ><select id="stack-filter">
+              <option value="">All stacks</option>
+            </select></label
+          ><label class="favorite-filter"
+            ><input id="favorites" type="checkbox" />Favorites only</label
+          >
+        </div>
+        <div id="links"></div>
+        <p id="empty" class="empty" hidden>
+          No links yet. Save a page you want to come back to.
+        </p>
+      </section>
+    </main>
+    <footer>Saved on this browser · No account needed</footer>
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
