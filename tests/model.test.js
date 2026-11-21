@@ -113,7 +113,7 @@ test("backup import merges without overwriting current metadata or trusting IDs"
 test("invalid backups are rejected atomically", () => {
   assert.throws(
     () =>
-      applyChange(first, { type: "import", backup: { version: 2, links: [] } }),
+      applyChange(first, { type: "import", backup: { version: 3, links: [] } }),
     /version/,
   );
   assert.throws(() =>
@@ -125,6 +125,26 @@ test("invalid backups are rejected atomically", () => {
       },
     }),
   );
+  assert.equal(first.length, 1);
+});
+
+test('text and email survive validation, search, backup merge and undo', () => {
+  let items = addLink(first, {kind:'text', content:'Meeting notes\nFollow up tomorrow'}, 'text', savedAt);
+  items = addLink(items, {kind:'email', content:'hello@example.com'}, 'email', savedAt);
+  assert.deepEqual(validateLinks(items), items);
+  assert.equal(selectLinks(items, {search:'tomorrow'}).length, 1);
+  assert.equal(applyChange(items, {type:'import', backup:{version:2, links:items}}).length, 3);
+  const removed = applyChange(items, {type:'remove', id:'email'});
+  assert.deepEqual(applyChange(removed, {type:'restore', link:items[0]}), items);
+  assert.throws(() => addLink(items, {kind:'text', content:' Meeting notes\nFollow up tomorrow '}, 'x', savedAt), /already saved/);
+});
+
+test('text stays inert and invalid content fails without changing existing links', () => {
+  const [item] = addLink([], {kind:'text',content:'<script>alert(1)</script>'}, 'text', savedAt);
+  assert.equal(item.content, '<script>alert(1)</script>');
+  for (const input of [{kind:'text',content:' '}, {kind:'text',content:'x'.repeat(8001)}, {kind:'email',content:'not an email'}, {kind:'unknown',content:'test'}]) {
+    assert.throws(() => addLink(first, input, 'x', savedAt));
+  }
   assert.equal(first.length, 1);
 });
 
