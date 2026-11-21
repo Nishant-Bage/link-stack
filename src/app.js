@@ -34,18 +34,26 @@ function render() {
         link,
         () => mutate({ type: "favorite", id: link.id }, "Favorite updated."),
         () =>
-          mutate({ type: "remove", id: link.id }, "Link deleted.", () => {
+          mutate({ type: "remove", id: link.id }, "Item deleted.", () => {
             removed = link;
             $("undo").hidden = false;
           }),
+        async (item) => {
+          try {
+            await navigator.clipboard.writeText(item.url ?? item.content);
+            notify("Copied to clipboard.");
+          } catch {
+            notify("Could not copy. Select the content and copy it manually.", true);
+          }
+        },
       ),
     ),
   );
   $("count").textContent = String(links.length);
   $("empty").hidden = visible.length > 0;
   $("empty").textContent = links.length
-    ? "No matching links. Try another search or filter."
-    : "No links yet. Save a page you want to come back to.";
+    ? "No matching items. Try another search or filter."
+    : "No items yet. Save a link, note, or email.";
 }
 
 async function mutate(action, message, onSuccess) {
@@ -65,9 +73,18 @@ async function mutate(action, message, onSuccess) {
   }
 }
 
+function updateCapture() {
+  const isLink = $("kind").value === "link";
+  $("url").parentElement.hidden = !isLink;
+  $("url").disabled = !isLink;
+  $("content-field").hidden = isLink;
+  $("content").disabled = isLink;
+  $("content").required = !isLink;
+}
+$("kind").addEventListener("change", updateCapture);
 $("toggle-manual").addEventListener("click", () => {
   $("add-form").hidden = false;
-  $("url").focus();
+  ($("kind").value === "link" ? $("url") : $("content")).focus();
 });
 $("cancel").addEventListener("click", () => {
   $("add-form").hidden = true;
@@ -92,21 +109,24 @@ $("add-form").addEventListener("submit", (event) => {
     {
       type: "add",
       input: {
+        kind: $("kind").value,
+        content: $("content").value,
         url: $("url").value,
         title: $("title").value,
         stack: $("stack").value,
       },
     },
-    "Link saved.",
+    "Item saved.",
     () => {
       $("add-form").reset();
+      updateCapture();
       $("add-form").hidden = true;
     },
   );
 });
 $("undo").addEventListener("click", () => {
   if (removed)
-    void mutate({ type: "restore", link: removed }, "Link restored.", () => {
+    void mutate({ type: "restore", link: removed }, "Item restored.", () => {
       removed = null;
       $("undo").hidden = true;
     });
@@ -121,13 +141,13 @@ if (new URLSearchParams(location.search).get("view") === "library") {
   document.body.classList.add("full-library");
   $("expand").hidden = true;
   $("save-current").hidden = true;
-  $("toggle-manual").textContent = "＋ Add a link";
+  $("toggle-manual").textContent = "＋ Add an item";
 }
 $("export").addEventListener("click", async () => {
   try {
     const latest = await request({ type: "read" });
     const url = URL.createObjectURL(
-      new Blob([JSON.stringify({ version: 1, links: latest }, null, 2)], {
+      new Blob([JSON.stringify({ version: 2, links: latest }, null, 2)], {
         type: "application/json",
       }),
     );
@@ -151,7 +171,7 @@ $("import-file").addEventListener("change", async () => {
     const backup = JSON.parse(await file.text());
     await mutate(
       { type: "import", backup },
-      "Backup merged. Existing links were kept; duplicates were skipped.",
+      "Backup merged. Existing items were kept; duplicates were skipped.",
     );
   } catch (error) {
     notify(`Could not restore backup: ${error.message}`, true);

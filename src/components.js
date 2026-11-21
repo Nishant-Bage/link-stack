@@ -5,23 +5,27 @@ function element(tag, className, text) {
   return node;
 }
 
-export function linkCard(link, onFavorite, onRemove) {
+export function linkCard(link, onFavorite, onRemove, onCopy) {
+  const isLink = !link.kind || link.kind === "link";
+  const hostname = isLink ? new URL(link.url).hostname : "";
   const card = element("article", "link-card");
   const badge = element(
     "span",
     "site-badge",
-    new URL(link.url).hostname
+    (isLink ? hostname : link.kind === "email" ? "@" : "T")
       .replace(/^www\./, "")
       .slice(0, 1)
       .toUpperCase(),
   );
   badge.setAttribute("aria-hidden", "true");
   const content = element("div", "link-content");
-  const anchor = element("a", "link-title", link.title);
-  anchor.href = link.url;
-  anchor.target = "_blank";
-  anchor.rel = "noreferrer";
-  const domain = element("p", "domain", new URL(link.url).hostname);
+  const anchor = element(isLink ? "a" : "strong", "link-title", link.title);
+  if (isLink) {
+    anchor.href = link.url;
+    anchor.target = "_blank";
+    anchor.rel = "noreferrer";
+  }
+  const domain = element("p", isLink ? "domain" : "saved-content", isLink ? hostname : link.content);
   const meta = element("div", "link-meta");
   meta.append(
     element("span", "stack-tag", link.stack),
@@ -47,6 +51,10 @@ export function linkCard(link, onFavorite, onRemove) {
   remove.setAttribute("aria-label", `Delete ${link.title}`);
   remove.addEventListener("click", () => onRemove(link));
   actions.append(favorite, remove);
+  const copy = element("button", "icon-button", "Copy");
+  copy.setAttribute("aria-label", `Copy ${link.title}`);
+  copy.addEventListener("click", () => onCopy(link));
+  actions.prepend(copy);
   card.append(badge, content, actions);
   return card;
 }

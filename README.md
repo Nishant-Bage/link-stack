@@ -24,11 +24,13 @@ After changing code, build again and click **Reload** on the extension's managem
 ## What it does
 
 - Save the current page to Inbox or the currently selected stack.
-- Add a URL manually with a title and custom stack name.
-- Search by title, URL, or stack; combine search with stack and favorite filters.
+- Add a URL, plain-text note, pasted email message, or email address with a title and custom stack name.
+- Choose **Link**, **Text / email message**, or **Email address** in the manual form. Text and email do not require a URL. Email messages are pasted manually; the extension does not access your mailbox.
+- Copy any saved item's content using its **Copy** button. Text keeps its line breaks and is displayed without interpreting HTML.
+- Search by title, URL, text, email address, or stack; combine search with stack and favorite filters.
 - Open saved pages, mark favorites, and delete links with one-step undo while the view remains open.
 - Open a full-width library in a separate tab.
-- Export JSON backups and restore them by merging new URLs without overwriting existing links.
+- Export version 2 JSON backups and restore version 1 or 2 backups by merging new items without overwriting existing items. Old link-only storage remains readable. New backups require this updated extension.
 - Keep multiple open views updated when local storage changes.
 
 Only HTTP(S) URLs are accepted. Duplicate detection normalizes URLs while preserving query parameters and fragments because those may identify distinct resources. Link titles are inserted as text, never interpreted as HTML. Domain initials are generated locally instead of fetching external favicons.

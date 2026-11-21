@@ -26,10 +26,11 @@
         <p>Your useful corner of the internet, all in one place.</p>
         <button id="save-current" class="primary">＋ Save current tab</button
         ><button id="toggle-manual" class="quiet">
-          or add a link manually
+          or add a link, text, or email
         </button>
       </section>
       <form id="add-form" hidden>
+        <label>Save as<select id="kind"><option value="link">Link</option><option value="text">Text / email message</option><option value="email">Email address</option></select></label>
         <label
           >URL<input
             id="url"
@@ -38,6 +39,7 @@
             placeholder="https://example.com"
             maxlength="8000"
         /></label>
+        <label id="content-field" hidden>Content<textarea id="content" rows="4" maxlength="8000" placeholder="Paste a note, email message, or email address" disabled></textarea></label>
         <label
           >Title <span class="optional">(optional)</span
           ><input
@@ -53,7 +55,7 @@
             value="Inbox" /></label
         ><datalist id="stack-options"></datalist>
         <div class="actions">
-          <button class="primary" type="submit">Save link</button
+          <button class="primary" type="submit">Save item</button
           ><button id="cancel" type="button" class="quiet">Cancel</button>
         </div>
       </form>
@@ -77,11 +79,11 @@
           aria-label="Restore Link Stack backup"
         />
         <label class="search"
-          ><span class="sr-only">Search saved links</span
+          ><span class="sr-only">Search saved items</span
           ><input
             id="search"
             type="search"
-            placeholder="Search titles, links, or stacks…"
+            placeholder="Search titles, content, or stacks…"
         /></label>
         <div class="filters">
           <label
